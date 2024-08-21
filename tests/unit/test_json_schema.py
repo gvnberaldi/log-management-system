@@ -1,9 +1,11 @@
 import pytest
+from export_to_json import create_json_schema, validate_json
+
 
 def test_valid_json():
     # Placeholder for valid JSON data
     valid_data = {
-        "timestamp": "2024-08-21T14:30:00Z",
+        "timestamp": "Jun 14 15:16:01",
         "hostname": "localhost",
         "process": "sshd",
         "pid": 1234,
@@ -24,9 +26,9 @@ def test_invalid_json_missing_fields():
         # 'message' is missing
     }
 
+    json_schema = create_json_schema()
     # This should raise a ValueError due to missing required fields
     with pytest.raises(ValueError):
-        json_schema = create_json_schema()
         validate_json(json_schema, invalid_data_missing_fields)
 
 
@@ -40,7 +42,7 @@ def test_invalid_json_bad_format():
         "message": "User login successful"
     }
 
+    json_schema = create_json_schema()
     # This should raise a ValueError due to invalid timestamp format
     with pytest.raises(ValueError):
-        json_schema = create_json_schema()
         validate_json(json_schema, invalid_data_bad_format)
