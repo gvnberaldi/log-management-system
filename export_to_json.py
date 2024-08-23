@@ -43,3 +43,5 @@ def validate_json(json_schema, data):
         validate(instance=data, schema=json_schema)
     except ValidationError as e:
         raise ValueError(f"Invalid JSON data: {e.message}")
+
+
