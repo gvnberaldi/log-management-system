@@ -1,7 +1,9 @@
+from pathlib import Path
+
 import pytest
 import subprocess
 import json
-from export_to_json import create_json_schema, validate_json
+from export_to_json import *
 
 
 def test_export_syslog_to_json_creates_json_file(tmp_path):
@@ -151,8 +153,12 @@ def test_cli_export_syslog_to_json(tmp_path):
 
     syslog_file.write_text(syslog_content)
 
+    # Construct the path to the syslog_utils.py file, going two directories up
+    script_path = Path(__file__).resolve().parents[2] / "main.py"
+    print(script_path)
+
     result = subprocess.run(
-        ['python3', 'main.py', 'export', 'json', str(syslog_file), str(output_json_file)],
+        ['python', str(script_path), 'export', 'json', str(syslog_file), str(output_json_file)],
         capture_output=True,
         text=True
     )
