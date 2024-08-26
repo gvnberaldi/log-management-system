@@ -12,6 +12,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:13
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: syslog
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: admin
+        # Wait for the service to be ready
+        options: --health-cmd="pg_isready -U postgres"
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -40,11 +52,23 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
+    #- name: Set up Docker Compose
+    #  uses: ndeloof/install-compose-action@v0.0.1
+    #  with:
+    #    legacy: true    # will also install in PATH as `docker-compose`
+    #- run: docker-compose --version
+
+    #- name: Build and run services
+    #  run: docker-compose up -d --build
+
+    #- name: Run tests
+    #  run: docker run --rm app pytest
+
     - name: Build Docker image
       run: docker build . -t syslog_manager:latest
 
     - name: Run tests
-      run: docker run --rm syslog_manager:latest pytest
+      run: docker run --rm --network host syslog_manager:latest pytest
 
     - name: Login to Docker Hub
       uses: docker/login-action@v3
