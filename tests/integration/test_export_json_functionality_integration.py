@@ -14,7 +14,6 @@ def test_cli_export_syslog_to_json(tmp_path):
 
     # Construct the path to the syslog_utils.py file, going two directories up
     script_path = Path(__file__).resolve().parents[2] / "main.py"
-    print(script_path)
 
     result = subprocess.run(
         ['python', str(script_path), 'export', 'json', str(syslog_file), str(output_json_file)],
