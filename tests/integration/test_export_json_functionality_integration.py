@@ -1,6 +1,19 @@
+import os
+import sys
 import pytest
 import subprocess
 from pathlib import Path
+
+# Get the directory containing the current script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Define the project path relative to the script directory
+# For example, if the project path is two directories up from the script:
+project_path = os.path.abspath(os.path.join(script_dir, '..', '..'))
+
+# Add the project path to sys.path
+if project_path not in sys.path:
+    sys.path.append(project_path)
 
 from export_to_json import *
 
@@ -16,7 +29,7 @@ def test_cli_export_syslog_to_json(tmp_path):
     script_path = Path(__file__).resolve().parents[2] / "main.py"
 
     result = subprocess.run(
-        ['python', str(script_path), 'export', 'json', str(syslog_file), str(output_json_file)],
+        [sys.executable, str(script_path), 'export', 'json', str(syslog_file), str(output_json_file)],
         capture_output=True,
         text=True
     )

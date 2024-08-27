@@ -11,6 +11,5 @@ psutil==6.0.0
 psycopg2==2.9.9
 pytest==8.3.2
 pytest-mock==3.14.0
-pytest-mysql==3.0.0
 referencing==0.35.1
 rpds-py==0.20.0
