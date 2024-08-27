@@ -62,3 +62,86 @@ def test_syslog_schema_fields(postgres_connection, postgres_cursor):
     assert len(columns) == len(expected_columns), "Schema does not have the expected number of columns"
     for col, expected in zip(columns, expected_columns):
         assert col == expected, f"Expected {expected} but got {col}"
+
+
+def test_export_sql_creates_sql_file(tmp_path, postgres_connection, postgres_cursor):
+    syslog_file = tmp_path / "syslog.log"
+    output_sql_file = tmp_path / "syslog.sql"
+
+    syslog_content = """Jun 14 15:16:01 combo sshd(pam_unix)[19939]: authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4"""
+    syslog_file.write_text(syslog_content)
+
+    export_syslog_to_sql(str(syslog_file), str(output_sql_file), postgres_connection, postgres_cursor)
+
+    # Verify the output
+    assert output_sql_file.exists()
+
+    # The SQL file should contain the correct CREATE TABLE and INSERT statements
+    expected_sql_content = """\
+        CREATE TABLE IF NOT EXISTS syslog (
+            id SERIAL PRIMARY KEY,
+            timestamp VARCHAR(255) NOT NULL,
+            hostname VARCHAR(255) NOT NULL,
+            process VARCHAR(255) NOT NULL,
+            pid INTEGER,
+            message TEXT NOT NULL
+        );
+
+        INSERT INTO syslog (timestamp, hostname, process, pid, message) VALUES
+        ('Jun 14 15:16:01', 'combo', 'sshd(pam_unix)', 19939, 'authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4');
+        """
+    assert output_sql_file.read_text().strip() == expected_sql_content.strip()
+
+    # Query the database to check if the data is correctly inserted
+    postgres_cursor.execute('SELECT timestamp, hostname, process, pid, message FROM syslog')
+    result = postgres_cursor.fetchone()
+
+    expected_data = (
+        'Jun 14 15:16:01', 'combo', 'sshd(pam_unix)', 19939,
+        'authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4'
+    )
+
+    assert result == expected_data
+
+
+def test_export_sql_ignores_invalid_lines(tmp_path, postgres_connection, postgres_cursor):
+    syslog_file = tmp_path / "syslog.log"
+    output_sql_file = tmp_path / "syslog.sql"
+
+    syslog_content = """
+    Jun 14 15:16:01 combo sshd(pam_unix)[19939]: authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4
+    Invalid line without the correct format
+    """
+    syslog_file.write_text(syslog_content)
+
+    export_syslog_to_sql(str(syslog_file), str(output_sql_file), postgres_connection, postgres_cursor)
+
+    # Verify the output
+    assert output_sql_file.exists()
+
+    # The SQL file should contain the correct CREATE TABLE and INSERT statements
+    expected_sql_content = """\
+            CREATE TABLE IF NOT EXISTS syslog (
+                id SERIAL PRIMARY KEY,
+                timestamp VARCHAR(255) NOT NULL,
+                hostname VARCHAR(255) NOT NULL,
+                process VARCHAR(255) NOT NULL,
+                pid INTEGER,
+                message TEXT NOT NULL
+            );
+
+            INSERT INTO syslog (timestamp, hostname, process, pid, message) VALUES
+            ('Jun 14 15:16:01', 'combo', 'sshd(pam_unix)', 19939, 'authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4');
+            """
+    assert output_sql_file.read_text().strip() == expected_sql_content.strip()
+
+    # Query the database to check if the data is correctly inserted
+    postgres_cursor.execute('SELECT timestamp, hostname, process, pid, message FROM syslog')
+    result = postgres_cursor.fetchone()
+
+    expected_data = (
+        'Jun 14 15:16:01', 'combo', 'sshd(pam_unix)', 19939,
+        'authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4'
+    )
+
+    assert result == expected_data
