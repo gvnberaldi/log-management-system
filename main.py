@@ -1,7 +1,10 @@
 import argparse
+import sys
+from datetime import datetime
 
 from export_to_json import export_syslog_to_json
 from export_to_sql import *
+from query_between_timestamps import query_syslog_between_timestamps
 
 
 def main():
@@ -13,6 +16,16 @@ def main():
     export_parser.add_argument('format', choices=['json', 'sql'], help='Export format')
     export_parser.add_argument('input_file', type=str, help='Path to the syslog file')
     export_parser.add_argument('output_file', type=str, help='Path to the output file')
+
+    # Query command
+    query_parser = subparsers.add_parser('query', help='Query syslog data')
+    query_parser.add_argument('input_file', type=str, help='Path to the syslog file')
+    query_subparsers = query_parser.add_subparsers(dest='query_type')
+
+    # 'between' command under 'query'
+    between_parser = query_subparsers.add_parser('between', help='Query syslog data between two timestamps')
+    between_parser.add_argument('start_date', type=str, help='Start date (format: DD/MM/YYYY)')
+    between_parser.add_argument('end_date', type=str, help='End date (format: DD/MM/YYYY)')
 
     args = parser.parse_args()
 
@@ -29,6 +42,15 @@ def main():
             finally:
                 cursor.close()
                 connection.close()
+    elif args.command == 'query':
+        if args.query_type == 'between':
+            start_date = datetime.strptime(args.start_date, "%d/%m/%Y")
+            end_date = datetime.strptime(args.end_date, "%d/%m/%Y")
+            query_syslog_between_timestamps(args.input_file, start_date, end_date)
+        else:
+            parser.print_help()
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":
