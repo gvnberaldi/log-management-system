@@ -13,7 +13,7 @@ def write_syslog_to_temp_file(tmp_path, syslog_data):
 def test_cli_query_process_name_command(tmp_path):
     # Create a temporary syslog file
     syslog_data = """\
-Jun 13 15:16:01 combo sshd(pam_unix)[19939]: authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4
+Jun 13 15:16:01 combo kernel: authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4
 Jun 14 15:17:02 combo sshd(pam_unix)[19940]: Accepted password for user1 from 192.168.0.1 port 22 ssh2
 Jun 14 15:18:03 combo systemd[1]: Started Session 1 of user user1.
 Jun 15 15:19:04 combo sshd(pam_unix)[19941]: Failed password for user1 from 192.168.0.2 port 22 ssh2
@@ -24,7 +24,6 @@ Jun 16 10:00:00 combo systemd[1]: Started Session 2 of user user2.
     # Define the expected output
     expected_output = """\
 Jun 14 15:17:02 combo sshd(pam_unix)[19940]: Accepted password for user1 from 192.168.0.1 port 22 ssh2
-Jun 14 15:18:03 combo systemd[1]: Started Session 1 of user user1.
 Jun 15 15:19:04 combo sshd(pam_unix)[19941]: Failed password for user1 from 192.168.0.2 port 22 ssh2
 """
 

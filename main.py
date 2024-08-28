@@ -5,6 +5,7 @@ from datetime import datetime
 from export_to_json import export_syslog_to_json
 from export_to_sql import *
 from query_between_timestamps import query_syslog_between_timestamps
+from query_by_process import query_by_process
 
 
 def main():
@@ -27,6 +28,10 @@ def main():
     between_parser.add_argument('start_date', type=str, help='Start date (format: DD/MM/YYYY)')
     between_parser.add_argument('end_date', type=str, help='End date (format: DD/MM/YYYY)')
 
+    # 'from_process' command under 'query'
+    from_process_parser = query_subparsers.add_parser('from_process', help='Query syslog data from a specific process')
+    from_process_parser.add_argument('process_name', type=str, help='Name of the process to filter by')
+
     args = parser.parse_args()
 
     if args.command == 'export':
@@ -47,6 +52,8 @@ def main():
             start_date = datetime.strptime(args.start_date, "%d/%m/%Y")
             end_date = datetime.strptime(args.end_date, "%d/%m/%Y")
             query_syslog_between_timestamps(args.input_file, start_date, end_date)
+        elif args.query_type == 'from_process':
+            query_by_process(args.input_file, args.process_name)
         else:
             parser.print_help()
     else:
