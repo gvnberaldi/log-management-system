@@ -7,6 +7,7 @@ from export_to_sql import *
 from query_between_timestamps import query_syslog_between_timestamps
 from query_by_process import query_by_process
 from query_by_words import query_by_words
+from split_by_day import split_syslog_by_day
 
 
 def main():
@@ -37,6 +38,10 @@ def main():
     contains_words_parser = query_subparsers.add_parser('contains_words', help='Query syslog data for messages containing specific words')
     contains_words_parser.add_argument('words', type=str, help='Comma-separated list of words to search for')
 
+    # Split command
+    split_parser = subparsers.add_parser('split', help='Split syslog file by day')
+    split_parser.add_argument('input_file', type=str, help='Path to the syslog file')
+
     args = parser.parse_args()
 
     if args.command == 'export':
@@ -46,12 +51,14 @@ def main():
             # Establish a database connection
             connection = get_db_connection()
             cursor = get_db_cursor(connection)
-
             try:
                 export_syslog_to_sql(args.input_file, args.output_file, connection, cursor)
             finally:
                 cursor.close()
                 connection.close()
+        else:
+            parser.print_help()
+
     elif args.command == 'query':
         if args.query_type == 'between':
             start_date = datetime.strptime(args.start_date, "%d/%m/%Y")
@@ -64,6 +71,10 @@ def main():
             query_by_words(args.input_file, keywords)
         else:
             parser.print_help()
+
+    elif args.command == 'split':
+        split_syslog_by_day(args.input_file)
+
     else:
         parser.print_help()
 
