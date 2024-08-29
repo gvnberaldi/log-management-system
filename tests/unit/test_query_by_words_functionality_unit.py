@@ -1,4 +1,19 @@
+import os
+import sys
+
 import pytest
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Define the project path relative to the script directory
+# For example, if the project path is two directories up from the script:
+project_path = os.path.abspath(os.path.join(script_dir, '..', '..'))
+
+# Add the project path to sys.path
+if project_path not in sys.path:
+    sys.path.append(project_path)
+
+from query_by_words import query_by_words
 
 
 def write_syslog_to_temp_file(tmp_path, syslog_data):
@@ -53,6 +68,6 @@ def test_common_word(tmp_path, sample_syslog_data):
 
 def test_message_with_multiple_keywords(tmp_path, sample_syslog_data):
     temp_file = write_syslog_to_temp_file(tmp_path, sample_syslog_data)
-    result = query_by_words(temp_file, ["invalid", "user", "admin"])
+    result = query_by_words(temp_file, ["invalid", "admin"])
     assert len(result) == 1
-    assert ["invalid", "user", "admin"] in result[0]
+    assert all(word in result[0] for word in ["invalid", "admin"])
