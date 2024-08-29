@@ -6,6 +6,7 @@ from export_to_json import export_syslog_to_json
 from export_to_sql import *
 from query_between_timestamps import query_syslog_between_timestamps
 from query_by_process import query_by_process
+from query_by_words import query_by_words
 
 
 def main():
@@ -32,6 +33,10 @@ def main():
     from_process_parser = query_subparsers.add_parser('from_process', help='Query syslog data from a specific process')
     from_process_parser.add_argument('process_name', type=str, help='Name of the process to filter by')
 
+    # 'contains_words' command under 'query'
+    contains_words_parser = query_subparsers.add_parser('contains_words', help='Query syslog data for messages containing specific words')
+    contains_words_parser.add_argument('words', type=str, help='Comma-separated list of words to search for')
+
     args = parser.parse_args()
 
     if args.command == 'export':
@@ -54,6 +59,9 @@ def main():
             query_syslog_between_timestamps(args.input_file, start_date, end_date)
         elif args.query_type == 'from_process':
             query_by_process(args.input_file, args.process_name)
+        elif args.query_type == 'contains_words':
+            keywords = args.words.split(',')
+            query_by_words(args.input_file, keywords)
         else:
             parser.print_help()
     else:
