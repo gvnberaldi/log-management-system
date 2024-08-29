@@ -36,10 +36,10 @@ Jun 16 15:18:03 combo systemd[1]: Started Session 1 of user user1.
     )
 
     # Check if the output files are created and their contents are correct
-    output_file_day_1 = tmp_path / 'syslog-2023-06-13.log'
-    output_file_day_2 = tmp_path / 'syslog-2023-06-14.log'
-    output_file_day_3 = tmp_path / 'syslog-2023-06-15.log'
-    output_file_day_4 = tmp_path / 'syslog-2023-06-16.log'
+    output_file_day_1 = tmp_path / 'syslog-2024-06-13.log'
+    output_file_day_2 = tmp_path / 'syslog-2024-06-14.log'
+    output_file_day_3 = tmp_path / 'syslog-2024-06-15.log'
+    output_file_day_4 = tmp_path / 'syslog-2024-06-16.log'
 
     assert output_file_day_1.exists(), f"{output_file_day_1} should exist"
     assert output_file_day_2.exists(), f"{output_file_day_2} should exist"

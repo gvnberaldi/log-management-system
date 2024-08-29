@@ -1,3 +1,18 @@
+# Get the directory containing the current script
+import os
+import sys
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Define the project path relative to the script directory
+# For example, if the project path is two directories up from the script:
+project_path = os.path.abspath(os.path.join(script_dir, '..', '..'))
+
+# Add the project path to sys.path
+if project_path not in sys.path:
+    sys.path.append(project_path)
+
+from split_by_day import split_syslog_by_day
 
 def write_syslog_to_temp_file(tmp_path, syslog_data):
     """Helper function to write syslog data to a temporary file."""
@@ -24,10 +39,10 @@ Jun 16 15:18:03 combo systemd[1]: Started Session 1 of user user1.
     split_syslog_by_day(temp_file)
 
     # Verify that the correct output files were created
-    output_file_day_1 = tmp_path / 'syslog-2023-06-13.log'
-    output_file_day_2 = tmp_path / 'syslog-2023-06-14.log'
-    output_file_day_3 = tmp_path / 'syslog-2023-06-15.log'
-    output_file_day_4 = tmp_path / 'syslog-2023-06-16.log'
+    output_file_day_1 = tmp_path / 'syslog-2024-06-13.log'
+    output_file_day_2 = tmp_path / 'syslog-2024-06-14.log'
+    output_file_day_3 = tmp_path / 'syslog-2024-06-15.log'
+    output_file_day_4 = tmp_path / 'syslog-2024-06-16.log'
 
     assert output_file_day_1.exists(), f"{output_file_day_1} should exist"
     assert output_file_day_2.exists(), f"{output_file_day_2} should exist"
@@ -88,8 +103,8 @@ Jul 01 12:34:56 combo sshd(pam_unix)[10002]: Another July log entry
     split_syslog_by_day(temp_file)
 
     # Verify that two output files are created, one for each month
-    output_file_jun_30 = tmp_path / 'syslog-2023-06-30.log'
-    output_file_jul_01 = tmp_path / 'syslog-2023-07-01.log'
+    output_file_jun_30 = tmp_path / 'syslog-2024-06-30.log'
+    output_file_jul_01 = tmp_path / 'syslog-2024-07-01.log'
 
     assert output_file_jun_30.exists(), f"{output_file_jun_30} should exist"
     assert output_file_jul_01.exists(), f"{output_file_jul_01} should exist"
@@ -122,8 +137,8 @@ Jan 01 00:00:01 combo sshd(pam_unix)[10001]: Log entry at the start of January
     split_syslog_by_day(temp_file)
 
     # Verify that two output files are created, one for each year-end day
-    output_file_dec_31 = tmp_path / 'syslog-2023-12-31.log'
-    output_file_jan_01 = tmp_path / 'syslog-2023-01-01.log'
+    output_file_dec_31 = tmp_path / 'syslog-2024-12-31.log'
+    output_file_jan_01 = tmp_path / 'syslog-2024-01-01.log'
 
     assert output_file_dec_31.exists(), f"{output_file_dec_31} should exist"
     assert output_file_jan_01.exists(), f"{output_file_jan_01} should exist"
