@@ -1,5 +1,6 @@
 attrs==24.2.0
 colorama==0.4.6
+coverage==7.6.1
 iniconfig==2.0.0
 jsonschema==4.23.0
 jsonschema-specifications==2023.12.1
