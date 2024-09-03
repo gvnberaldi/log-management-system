@@ -194,6 +194,17 @@ jobs:
         draft: false
         prerelease: false
 
+    - name: Upload Docker TAR to GitHub Release
+      if: success() && steps.check-tag.outputs.exists == 'false'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./build-artifacts/syslog_manager.tar
+        asset_name: syslog_manager_v1.0.3.tar
+        asset_content_type: application/x-tar
+
     - name: Upload to GitHub Release
       if: success() && steps.check-tag.outputs.exists == 'false'
       uses: actions/upload-release-asset@v1
@@ -201,7 +212,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./build-artifacts/syslog_manager-1.0.3-py3-none-any.whl
+        asset_path: ./build-artifacts/dist/syslog_manager-1.0.3-py3-none-any.whl
         asset_name: syslog_manager-1.0.3-py3-none-any.whl
         asset_content_type: application/octet-stream
 
@@ -212,4 +223,4 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
       run: |
         python -m pip install --upgrade twine
-        twine upload --skip-existing build-artifacts/*
+        twine upload --skip-existing ./build-artifacts/dist/*
