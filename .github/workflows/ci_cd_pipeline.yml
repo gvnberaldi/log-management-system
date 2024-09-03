@@ -146,6 +146,10 @@ jobs:
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
+    - name: Extract version from setup.py
+      id: get_version
+      run: echo "VERSION=$(python setup.py --version)" >> $GITHUB_ENV
+
     - name: Download Artifacts
       uses: actions/download-artifact@v3
       with:
