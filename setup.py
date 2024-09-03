@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="syslog_manager",
-    version="1.0.1",
+    version="1.0.2",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -25,7 +25,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'syslog_manager = main:main',
+            'syslog_manager = syslog_manager.main:main',
         ],
     },
 )

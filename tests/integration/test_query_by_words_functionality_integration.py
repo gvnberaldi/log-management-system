@@ -30,7 +30,7 @@ Jun 15 04:06:20 combo logrotate: ALERT exited abnormally with [1]
 """
 
     # Construct the path to the main.py file
-    script_path = Path(__file__).resolve().parents[2] / "main.py"
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
 
     # Run the command using subprocess
     result = subprocess.run(

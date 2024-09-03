@@ -1,5 +1,4 @@
 import argparse
-import sys
 from datetime import datetime
 
 from export_to_json import export_syslog_to_json

@@ -1,18 +1,4 @@
-# Get the directory containing the current script
-import os
-import sys
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Define the project path relative to the script directory
-# For example, if the project path is two directories up from the script:
-project_path = os.path.abspath(os.path.join(script_dir, '..', '..'))
-
-# Add the project path to sys.path
-if project_path not in sys.path:
-    sys.path.append(project_path)
-
-from split_by_day import split_syslog_by_day
+from syslog_manager.split_by_day import split_syslog_by_day
 
 def write_syslog_to_temp_file(tmp_path, syslog_data):
     """Helper function to write syslog data to a temporary file."""

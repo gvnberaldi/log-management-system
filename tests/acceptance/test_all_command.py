@@ -13,7 +13,7 @@ project_path = os.path.abspath(os.path.join(script_dir, '..', '..'))
 if project_path not in sys.path:
     sys.path.append(project_path)
 
-from export_to_json import *
+from syslog_manager.export_to_json import *
 
 
 def test_export_syslog_to_json():
@@ -22,7 +22,7 @@ def test_export_syslog_to_json():
     output_json_file = Path(__file__).resolve().parents[2] / "data" / "syslog_data.json"
 
     # Path to the main.py file
-    script_path = Path(__file__).resolve().parents[2] / "main.py"
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
 
     # Run the export command
     result = subprocess.run(
@@ -57,7 +57,7 @@ def test_export_syslog_to_sql():
     output_sql_file = Path(__file__).resolve().parents[2] / "data" / "syslog_data.sql"
 
     # Path to the main.py file
-    script_path = Path(__file__).resolve().parents[2] / "main.py"
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
 
     # Run the export command
     result = subprocess.run(
@@ -80,7 +80,7 @@ def test_query_by_words_command():
     search_words = "failure,Accepted,abnormally"
 
     # Construct the path to the main.py file
-    script_path = Path(__file__).resolve().parents[2] / "main.py"
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
 
     # Run the command using subprocess
     result = subprocess.run(
@@ -105,7 +105,7 @@ def test_query_by_process_name_command():
     process_name = "sshd"
 
     # Construct the path to the main.py file
-    script_path = Path(__file__).resolve().parents[2] / "main.py"
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
 
     # Run the command using subprocess
     result = subprocess.run(
@@ -131,7 +131,7 @@ def test_query_between_timestamp_command():
     end_date = "16/06/2025"
 
     # Construct the path to the main.py file
-    script_path = Path(__file__).resolve().parents[2] / "main.py"
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
 
     # Run the command using subprocess
     result = subprocess.run(
@@ -153,7 +153,7 @@ def test_split_by_day_command():
     syslog_file = Path(__file__).resolve().parents[2] / "data" / "syslog_data.log"
 
     # Construct the path to the main.py file
-    script_path = Path(__file__).resolve().parents[2] / "main.py"
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
 
     # Run the command using subprocess
     result = subprocess.run(

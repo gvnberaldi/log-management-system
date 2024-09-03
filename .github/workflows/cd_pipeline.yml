@@ -1,0 +1,72 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Push Docker image
+      run: |
+        docker tag syslog_manager:latest ${{ secrets.DOCKER_USERNAME }}/syslog_manager:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/syslog_manager:latest
+
+    - name: Build the python package
+      run: |
+        python setup.py sdist bdist_wheel
+
+    - name: Install the package from the wheel
+      run: |
+        pip install dist/*.whl
+
+    - name: Run Acceptance Tests
+      run: |
+        pytest tests/acceptance
+
+    - name: Create GitHub Release
+      if: success()
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v1.0.2
+        release_name: "v1.0.2 Release"
+        draft: false
+        prerelease: false
+
+    - name: Upload to GitHub Release
+      if: success()
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/*.whl
+        asset_name: syslog_manager-1.0.2-py3-none-any.whl
+        asset_content_type: application/octet-stream
+
+    - name: Publish to PyPi
+      if: success()
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+      run: |
+        python -m pip install --upgrade twine
+        twine upload --skip-existing dist/*
