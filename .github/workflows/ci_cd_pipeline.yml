@@ -92,7 +92,10 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Build the Docker image
-      run: docker build . -t syslog_manager:latest
+      run: docker build . -t syslog_manager:1.0.3
+
+    - name: Save Docker image as a TAR file
+      run: docker save syslog_manager:1.0.3 -o syslog_manager.tar
 
     - name: Build the Python package
       run: |
@@ -104,7 +107,7 @@ jobs:
         name: build-artifacts
         path: |
           dist/*.whl
-          ./docker-image
+          syslog_manager.tar
 
   deploy:
     runs-on: ubuntu-latest
@@ -150,12 +153,15 @@ jobs:
 
     - name: Install the package from the wheel
       run: |
-        pip install ./build-artifacts/*.whl
+        pip install ./build-artifacts/dist/*.whl
 
-    - name: Run docker image tests
-      run: docker run --rm --network host syslog_manager:latest pytest
+    - name: Load Docker image from TAR file
+      run: docker load -i ./build-artifacts/syslog_manager.tar
 
-    - name: Run Acceptance Tests
+    - name: Run Docker Acceptance tests
+      run: docker run --rm --network host syslog_manager:1.0.3 pytest tests/acceptance
+
+    - name: Run python Package Acceptance Tests
       run: |
         pytest tests/acceptance
 
