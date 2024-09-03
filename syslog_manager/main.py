@@ -1,5 +1,15 @@
 import argparse
+import os
+import sys
 from datetime import datetime
+
+# Get the directory containing the current script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Define the project path relative to the script directory
+project_path = os.path.abspath(os.path.join(script_dir, '..'))
+# Add the project path to sys.path
+if project_path not in sys.path:
+    sys.path.append(project_path)
 
 from export_to_json import export_syslog_to_json
 from export_to_sql import *
