@@ -173,8 +173,8 @@ jobs:
 
     - name: Push Docker image
       run: |
-        docker tag syslog_manager:latest ${{ secrets.DOCKER_USERNAME }}/syslog_manager:latest
-        docker push ${{ secrets.DOCKER_USERNAME }}/syslog_manager:latest
+        docker tag syslog_manager:1.0.3 ${{ secrets.DOCKER_USERNAME }}/syslog_manager:1.0.3
+        docker push ${{ secrets.DOCKER_USERNAME }}/syslog_manager:1.0.3
 
     - name: Check if tag exists
       id: check-tag
