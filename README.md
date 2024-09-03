@@ -21,59 +21,64 @@ Syslog Manager is a terminal-based tool for manipulating and querying syslog fil
 ### Prerequisites
 
 - Python 3.12
-- Required Python packages (see `requirements.txt`)
 
-### Setup
-
-1. **Clone the Repository:**
+### From PyPi (Recommended)
+You can install Syslog Manager directly from PyPI using pip:
 
    ```bash
-   git clone https://github.com/gvnberaldi/rdm_exam.git
+   pip install syslog_manager
+   ```
 
-2. **Navigate to the Project Directory:**
-
-   ```bash
-   cd rdm_exam
-
-3. **Install Dependencies:**
+### From GitHub Release
+Alternatively, you can download the .whl package from the GitHub Releases page and install it using pip:
 
    ```bash
-   pip install -r requirements.txt
+   pip install path/to/syslog_manager-x.x.x-py3-none-any.whl
+   ```
+Replace path/to/ with the actual path to the downloaded .whl file.
 
 ## Usage
+
+Once installed, the syslog_manager command is available in your terminal. Below are some examples of how to use it.
 
 ### Export Syslog
 
 1. **Export to JSON:**
 
    ```bash
-   python main.py export json /path/to/syslog.log /path/to/output.json
-
+   syslog_manager export json /path/to/syslog.log /path/to/output.json
+   ```
+   
 2. **Export to SQL:**
 
    ```bash
-   python main.py export sql /path/to/syslog.log /path/to/output.sql
-
+   syslog_manager export sql /path/to/syslog.log /path/to/output.sql
+   ```
+   
 ### Query Syslog
 
 1. **Retrieve Log Messages Between Two Timestamps:**
 
    ```bash
-   python main.py query /path/to/syslog.log between 01/01/2024 07/07/2024
-
+   syslog_manager query /path/to/syslog.log between 01/01/2024 07/07/2024
+   ```
+   
 2. **Retrieve Log Messages from a Specific Process:**
 
    ```bash
-   python main.py query /path/to/syslog.log from_process process_name
-
+   syslog_manager query /path/to/syslog.log from_process process_name
+   ```
+   
 3. **Retrieve Log Messages Containing Specific Terms:**
 
    ```bash
-   python main.py query /path/to/syslog.log contains_words word1,word2,word3
-
+   syslog_manager query /path/to/syslog.log contains_words word1,word2,word3
+   ```
+   
 ### Split Syslog
 
 1. **Split Syslog into Daily Files:**
 
    ```bash
-   python main.py split /path/to/syslog.log
+   syslog_manager split /path/to/syslog.log
+   ```
