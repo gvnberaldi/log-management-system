@@ -23,7 +23,7 @@ Jun 16 15:18:03 combo systemd[1]: Started Session 1 of user user1.
     temp_file = write_syslog_to_temp_file(tmp_path, syslog_data)
 
     # Construct the path to the main.py file
-    script_path = Path(__file__).resolve().parents[2] / "main.py"
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
 
     # Run the split command using subprocess
     result = subprocess.run(

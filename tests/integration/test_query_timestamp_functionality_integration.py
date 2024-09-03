@@ -23,7 +23,7 @@ Jun 15 15:19:04 combo sshd(pam_unix)[19941]: Failed password for user1 from 192.
 """
 
     # Construct the path to the syslog_utils.py file, going two directories up
-    script_path = Path(__file__).resolve().parents[2] / "main.py"
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
 
     # Run the command using subprocess
     result = subprocess.run(
