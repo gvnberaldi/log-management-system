@@ -81,8 +81,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.2
-        release_name: "v1.0.2 Release"
+        tag_name: v1.0.3
+        release_name: "v1.0.3 Release"
         draft: false
         prerelease: false
 
@@ -93,8 +93,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/syslog_manager-1.0.2-py3-none-any.whl
-        asset_name: syslog_manager_v1.0.2.whl
+        asset_path: ./dist/syslog_manager-1.0.3-py3-none-any.whl
+        asset_name: syslog_manager-1.0.3-py3-none-any.whl
         asset_content_type: application/octet-stream
 
     - name: Publish to PyPi
