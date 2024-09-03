@@ -75,6 +75,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Set PYTHONPATH
+      run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
@@ -123,15 +136,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Set PYTHONPATH
+      run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+
     - name: Download Artifacts
       uses: actions/download-artifact@v3
       with:
         name: build-artifacts
         path: ./build-artifacts
 
+    - name: List files for debugging
+      run: ls -R ./build-artifacts
+
     - name: Install the package from the wheel
       run: |
-        pip install build-artifacts/*.whl
+        pip install ./build-artifacts/*.whl
 
     - name: Run docker image tests
       run: docker run --rm --network host syslog_manager:latest pytest
