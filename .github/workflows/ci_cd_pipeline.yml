@@ -88,14 +88,18 @@ jobs:
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
+    - name: Extract version from setup.py
+      id: get_version
+      run: echo "VERSION=$(python setup.py --version)" >> $GITHUB_ENV
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
     - name: Build the Docker image
-      run: docker build . -t syslog_manager:1.0.3
+      run: docker build . -t syslog_manager:${{ env.VERSION }}
 
     - name: Save Docker image as a TAR file
-      run: docker save syslog_manager:1.0.3 -o syslog_manager.tar
+      run: docker save syslog_manager:${{ env.VERSION }} -o syslog_manager.tar
 
     - name: Build the Python package
       run: |
@@ -142,6 +146,10 @@ jobs:
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
+    - name: Extract version from setup.py
+      id: get_version
+      run: echo "VERSION=$(python setup.py --version)" >> $GITHUB_ENV
+
     - name: Download Artifacts
       uses: actions/download-artifact@v3
       with:
@@ -159,7 +167,7 @@ jobs:
       run: docker load -i ./build-artifacts/syslog_manager.tar
 
     - name: Run Docker Acceptance tests
-      run: docker run --rm --network host syslog_manager:1.0.3 pytest tests/acceptance
+      run: docker run --rm --network host syslog_manager:${{ env.VERSION }} pytest tests/acceptance
 
     - name: Run python Package Acceptance Tests
       run: |
@@ -173,14 +181,14 @@ jobs:
 
     - name: Push Docker image
       run: |
-        docker tag syslog_manager:1.0.3 ${{ secrets.DOCKER_USERNAME }}/syslog_manager:1.0.3
-        docker push ${{ secrets.DOCKER_USERNAME }}/syslog_manager:1.0.3
+        docker tag syslog_manager:${{ env.VERSION }} ${{ secrets.DOCKER_USERNAME }}/syslog_manager:${{ env.VERSION }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/syslog_manager:${{ env.VERSION }}
 
     - name: Check if tag exists
       id: check-tag
       uses: mukunku/tag-exists-action@v1.6.0
       with:
-        tag: 'v1.0.3'  # Replace with actual version tag
+        tag: 'v${{ env.VERSION }}'  # Replace with actual version tag
 
     - name: Create GitHub Release
       if: success() && steps.check-tag.outputs.exists == 'false'
@@ -189,8 +197,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.3
-        release_name: "v1.0.3 Release"
+        tag_name: "v${{ env.VERSION }}"
+        release_name: "v${{ env.VERSION }} Release"
         draft: false
         prerelease: false
 
@@ -202,7 +210,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./build-artifacts/syslog_manager.tar
-        asset_name: syslog_manager_v1.0.3.tar
+        asset_name: syslog_manager_v${{ env.VERSION }}.tar
         asset_content_type: application/x-tar
 
     - name: Upload to GitHub Release
@@ -212,8 +220,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./build-artifacts/dist/syslog_manager-1.0.3-py3-none-any.whl
-        asset_name: syslog_manager-1.0.3-py3-none-any.whl
+        asset_path: ./build-artifacts/dist/syslog_manager-${{ env.VERSION }}-py3-none-any.whl
+        asset_name: syslog_manager-${{ env.VERSION }}-py3-none-any.whl
         asset_content_type: application/octet-stream
 
     - name: Publish to PyPi
