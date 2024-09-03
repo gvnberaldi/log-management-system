@@ -13,6 +13,18 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:13
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: syslog
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: admin
+        # Wait for the service to be ready
+        options: --health-cmd="pg_isready -U postgres"
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
