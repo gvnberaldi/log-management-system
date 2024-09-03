@@ -11,12 +11,12 @@ project_path = os.path.abspath(os.path.join(script_dir, '..'))
 if project_path not in sys.path:
     sys.path.append(project_path)
 
-from export_to_json import export_syslog_to_json
-from export_to_sql import *
-from query_between_timestamps import query_syslog_between_timestamps
-from query_by_process import query_by_process
-from query_by_words import query_by_words
-from split_by_day import split_syslog_by_day
+from syslog_manager.export_to_json import export_syslog_to_json
+from syslog_manager.export_to_sql import *
+from syslog_manager.query_between_timestamps import query_syslog_between_timestamps
+from syslog_manager.query_by_process import query_by_process
+from syslog_manager.query_by_words import query_by_words
+from syslog_manager.split_by_day import split_syslog_by_day
 
 
 def main():
