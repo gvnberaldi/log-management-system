@@ -1,22 +1,7 @@
 import os
-import re
 from datetime import datetime
 
-
-def parse_syslog_line(line):
-    """Parses a single syslog line into its components."""
-    syslog_pattern = re.compile(
-        r'^(?P<timestamp>[A-Za-z]{3} \d{2} \d{2}:\d{2}:\d{2}) '
-        r'(?P<hostname>\S+) '
-        r'(?P<process>\S+?)'
-        r'(?:\[(?P<pid>\d+)\])?: '
-        r'(?P<message>.*)$'
-    )
-
-    match = syslog_pattern.match(line)
-    if match:
-        return match.groupdict()
-    return None
+from syslog_manager.utility import parse_syslog_line
 
 
 def split_syslog_by_day(file_path):

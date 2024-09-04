@@ -5,6 +5,7 @@ import subprocess
 from pathlib import Path
 
 from syslog_manager.export_to_json import *
+from syslog_manager.utility import create_json_schema, validate_json
 
 
 def test_cli_export_syslog_to_json(tmp_path):

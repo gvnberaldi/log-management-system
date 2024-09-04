@@ -2,7 +2,7 @@ import sys
 import subprocess
 from pathlib import Path
 
-from syslog_manager.export_to_sql import *
+from syslog_manager.utility import get_db_connection, get_db_cursor
 
 
 def test_cli_export_syslog_to_sql(tmp_path):

@@ -213,7 +213,7 @@ jobs:
         asset_name: syslog_manager_v${{ env.VERSION }}.tar
         asset_content_type: application/x-tar
 
-    - name: Upload to GitHub Release
+    - name: Upload whl to GitHub Release
       if: success() && steps.check-tag.outputs.exists == 'false'
       uses: actions/upload-release-asset@v1
       env:
@@ -224,7 +224,7 @@ jobs:
         asset_name: syslog_manager-${{ env.VERSION }}-py3-none-any.whl
         asset_content_type: application/octet-stream
 
-    - name: Publish to PyPi
+    - name: Publish whl to PyPi
       if: success()
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
