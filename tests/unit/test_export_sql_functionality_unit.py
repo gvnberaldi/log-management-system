@@ -1,6 +1,7 @@
 import pytest
 
 from syslog_manager.export_to_sql import *
+from syslog_manager.utility import get_db_connection, get_db_cursor
 
 
 # Define the fixture for PostgreSQL connection and cursor
