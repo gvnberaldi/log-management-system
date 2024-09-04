@@ -1,5 +1,3 @@
-import os
-import sys
 from datetime import datetime
 
 from syslog_manager.query_between_timestamps import query_syslog_between_timestamps

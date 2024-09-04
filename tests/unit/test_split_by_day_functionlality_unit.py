@@ -1,5 +1,6 @@
 from syslog_manager.split_by_day import split_syslog_by_day
 
+
 def write_syslog_to_temp_file(tmp_path, syslog_data):
     """Helper function to write syslog data to a temporary file."""
     temp_file = tmp_path / "syslog.log"

@@ -17,6 +17,7 @@ from syslog_manager.query_between_timestamps import query_syslog_between_timesta
 from syslog_manager.query_by_process import query_by_process
 from syslog_manager.query_by_words import query_by_words
 from syslog_manager.split_by_day import split_syslog_by_day
+from syslog_manager.utility import get_db_connection, get_db_cursor
 
 
 def main():
