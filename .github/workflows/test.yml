@@ -63,3 +63,11 @@ jobs:
         coverage run -m pytest tests
         coverage report --fail-under=80  # Adjust the threshold as needed
         coverage xml -o coverage.xml
+
+    - name: Merge Pull Request
+      if: success()  # Only run if all previous steps passed
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub provides this automatically
+      run: |
+        PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+        gh pr merge $PR_NUMBER --merge
