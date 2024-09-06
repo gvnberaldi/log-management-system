@@ -6,7 +6,7 @@ on:
       - Split-CI/CD-pipeline
 
 jobs:
-  test-build-deploy:
+  pipeline:
     runs-on: ubuntu-latest
 
     services:
