@@ -17,7 +17,7 @@ from syslog_manager.query_between_timestamps import query_syslog_between_timesta
 from syslog_manager.query_by_process import query_by_process
 from syslog_manager.query_by_words import query_by_words
 from syslog_manager.split_by_day import split_syslog_by_day
-from syslog_manager.utility import get_db_connection, get_db_cursor
+from syslog_manager.count_event_per_process import count_event_per_process
 
 
 def main():
@@ -52,20 +52,17 @@ def main():
     split_parser = subparsers.add_parser('split', help='Split syslog file by day')
     split_parser.add_argument('input_file', type=str, help='Path to the syslog file')
 
+    # Print number of event for each process
+    events_counter = subparsers.add_parser('count_event_per_process', help='Export syslog data')
+    events_counter.add_argument('input_file', type=str, help='Path to the syslog file')
+
     args = parser.parse_args()
 
     if args.command == 'export':
         if args.format == 'json':
             export_syslog_to_json(args.input_file, args.output_file)
         elif args.format == 'sql':
-            # Establish a database connection
-            connection = get_db_connection()
-            cursor = get_db_cursor(connection)
-            try:
-                export_syslog_to_sql(args.input_file, args.output_file, connection, cursor)
-            finally:
-                cursor.close()
-                connection.close()
+            export_syslog_to_sql(args.input_file, args.output_file)
         else:
             parser.print_help()
 
@@ -84,6 +81,11 @@ def main():
 
     elif args.command == 'split':
         split_syslog_by_day(args.input_file)
+
+    elif args.command == 'count_event_per_process':
+        num_event = count_event_per_process(args.input_file)
+        for process, events_num in num_event.items():
+            print(f'Events for process {process}: {events_num}')
 
     else:
         parser.print_help()
