@@ -17,7 +17,6 @@ setup(
         "pluggy==1.5.0",
         "port-for==0.7.2",
         "psutil==6.0.0",
-        "psycopg2==2.9.9",
         "pytest==8.3.2",
         "pytest-mock==3.14.0",
         "referencing==0.35.1",

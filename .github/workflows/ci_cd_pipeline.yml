@@ -125,17 +125,6 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Upload Docker TAR to GitHub Release
-      if: success() && steps.check-tag.outputs.exists == 'false'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: syslog_manager.tar
-        asset_name: syslog_manager_v${{ env.VERSION }}.tar
-        asset_content_type: application/x-tar
-
     - name: Upload whl to GitHub Release
       if: success() && steps.check-tag.outputs.exists == 'false'
       uses: actions/upload-release-asset@v1
