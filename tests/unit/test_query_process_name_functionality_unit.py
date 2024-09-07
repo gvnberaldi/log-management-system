@@ -1,3 +1,14 @@
+import os
+import sys
+
+# Get the directory containing the current script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Define the project path relative to the script directory
+project_path = os.path.abspath(os.path.join(script_dir, '..', '..'))
+# Add the project path to sys.path
+if project_path not in sys.path:
+    sys.path.append(project_path)
+
 from syslog_manager.query_by_process import query_by_process
 
 

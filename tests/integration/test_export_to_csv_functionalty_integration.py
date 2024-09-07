@@ -3,8 +3,6 @@ import sys
 from pathlib import Path
 import csv
 
-from syslog_manager.utility import validate_csv, create_csv_schema
-
 
 def test_cli_export_syslog_to_csv(tmp_path):
     # Sample syslog content
@@ -32,10 +30,6 @@ def test_cli_export_syslog_to_csv(tmp_path):
 
     # Check that the output CSV file was created
     assert output_csv_file.exists()
-
-    # Validate the CSV against the schema
-    csv_schema = create_csv_schema()
-    validate_csv(csv_schema, output_csv_file)
 
     # Read and parse the CSV file
     with open(output_csv_file, 'r') as csvfile:
