@@ -1,5 +1,6 @@
 import re
 from jsonschema import validate, ValidationError
+from pycsvschema.checker import Validator
 
 
 def parse_syslog_line(line):
@@ -51,11 +52,55 @@ def create_json_schema():
 
 
 def validate_json(json_schema, data):
-    """
-    Validate the provided data against the JSON schema.
-    Raises ValueError if the data is invalid.
-    """
     try:
         validate(instance=data, schema=json_schema)
     except ValidationError as e:
         raise ValueError(f"Invalid JSON data: {e.message}")
+
+
+def create_csv_schema():
+    schema = {
+        'fields': [
+            {
+                'name': 'timestamp',
+                'type': 'string',
+                "required": True,
+                'pattern': "^(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s+\\d{1,2}\\s+\\d{2}:\\d{2}:\\d{2}$",
+                'description': 'The date and time when the log was created'
+            },
+            {
+                'name': 'hostname',
+                'type': 'string',
+                "required": True,
+                'description': 'The name of the machine that generated the log'
+            },
+            {
+                'name': 'process',
+                'type': 'string',
+                "required": True,
+                'description': 'The process that generated the log'
+            },
+            {
+                'name': 'pid',
+                'type': 'number',
+                "required": True,
+                "null_or_empty": True,
+                'description': 'The process ID (optional)'
+            },
+            {
+                'name': 'message',
+                'type': 'string',
+                "required": True,
+                'description': 'The actual log message'
+            }
+        ]
+    }
+    return schema
+
+
+def validate_csv(csv_schema, data):
+    v = Validator(csvfile=data, schema=csv_schema)
+    try:
+        v.validate()
+    except ValidationError as e:
+        raise ValueError(f"Invalid CSV data: {e.message}")
