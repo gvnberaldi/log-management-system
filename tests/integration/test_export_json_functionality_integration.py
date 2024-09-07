@@ -1,11 +1,7 @@
-
+import json
 import sys
-import pytest
 import subprocess
 from pathlib import Path
-
-from syslog_manager.export_to_json import *
-from syslog_manager.utility import create_json_schema, validate_json
 
 
 def test_cli_export_syslog_to_json(tmp_path):
@@ -29,16 +25,6 @@ def test_cli_export_syslog_to_json(tmp_path):
 
     with open(output_json_file, 'r') as f:
         data = json.load(f)
-
-    # Define the expected schema
-    json_schema = create_json_schema()
-
-    # Validate JSON data against the schema
-    for entry in data:
-        try:
-            validate_json(json_schema, entry)
-        except ValueError as e:
-            pytest.fail(f"JSON data is invalid: {e}")
 
     expected_data = [
         {

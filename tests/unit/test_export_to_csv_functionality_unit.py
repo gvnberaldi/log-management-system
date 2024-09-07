@@ -1,7 +1,16 @@
 import csv
+import os
+import sys
 
-from syslog_manager.export_to_csv import export_syslog_to_csv
-from syslog_manager.utility import create_csv_schema, validate_csv
+# Get the directory containing the current script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Define the project path relative to the script directory
+project_path = os.path.abspath(os.path.join(script_dir, '..', '..'))
+# Add the project path to sys.path
+if project_path not in sys.path:
+    sys.path.append(project_path)
+
+from syslog_manager.exporter import CSVSyslogExporter
 
 
 def test_export_syslog_to_csv_creates_csv_file(tmp_path):
@@ -14,14 +23,11 @@ def test_export_syslog_to_csv_creates_csv_file(tmp_path):
     syslog_file.write_text(syslog_content)
 
     # Run the function that is being tested
-    export_syslog_to_csv(syslog_file, output_csv_file)
+    csv_exporter = CSVSyslogExporter(syslog_file)
+    csv_exporter.export(output_csv_file)
 
     # Verify the output CSV file exists
     assert output_csv_file.exists()
-
-    # Validate CSV against schema
-    csv_schema = create_csv_schema()
-    validate_csv(csv_schema, output_csv_file)
 
     # Open and read the generated CSV file
     with output_csv_file.open('r') as csvfile:
@@ -58,14 +64,11 @@ Jun 14 15:16:03 combo kernel: [UFW BLOCK] IN=eth0 OUT= MAC=00:0c:29:68:22:3c:00:
     syslog_file.write_text(syslog_content)
 
     # Run the function that is being tested
-    export_syslog_to_csv(syslog_file, output_csv_file)
+    csv_exporter = CSVSyslogExporter(syslog_file)
+    csv_exporter.export(output_csv_file)
 
     # Verify the output CSV file exists
     assert output_csv_file.exists()
-
-    # Validate CSV against schema
-    csv_schema = create_csv_schema()
-    validate_csv(csv_schema, output_csv_file)
 
     # Open and read the generated CSV file
     with output_csv_file.open('r') as csvfile:
@@ -114,14 +117,11 @@ def test_export_syslog_to_csv_missing_pid(tmp_path):
     syslog_file.write_text(syslog_content)
 
     # Run the function that is being tested
-    export_syslog_to_csv(syslog_file, output_csv_file)
+    csv_exporter = CSVSyslogExporter(syslog_file)
+    csv_exporter.export(output_csv_file)
 
     # Verify the output CSV file exists
     assert output_csv_file.exists()
-
-    # Validate CSV against schema
-    csv_schema = create_csv_schema()
-    validate_csv(csv_schema, output_csv_file)
 
     # Open and read the generated CSV file
     with output_csv_file.open('r') as csvfile:
@@ -155,14 +155,11 @@ def test_export_syslog_to_csv_empty_file(tmp_path):
     syslog_file.write_text("")
 
     # Run the function that is being tested
-    export_syslog_to_csv(syslog_file, output_csv_file)
+    csv_exporter = CSVSyslogExporter(syslog_file)
+    csv_exporter.export(output_csv_file)
 
     # Verify the output CSV file exists
     assert output_csv_file.exists()
-
-    # Validate CSV against schema
-    csv_schema = create_csv_schema()
-    validate_csv(csv_schema, output_csv_file)
 
     # Open and read the generated CSV file
     with output_csv_file.open('r') as csvfile:

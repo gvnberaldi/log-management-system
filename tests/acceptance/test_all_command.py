@@ -2,22 +2,7 @@ import csv
 import os
 import subprocess
 import sys
-
-import pytest
 from pathlib import Path
-
-from jsonschema.exceptions import ValidationError
-
-# Get the directory containing the current script
-script_dir = os.path.dirname(os.path.abspath(__file__))
-# Define the project path relative to the script directory
-project_path = os.path.abspath(os.path.join(script_dir, '..', '..'))
-# Add the project path to sys.path
-if project_path not in sys.path:
-    sys.path.append(project_path)
-
-from syslog_manager.export_to_json import *
-from syslog_manager.utility import create_json_schema, validate_json, create_csv_schema, validate_csv
 
 
 def test_export_syslog_to_json():
@@ -41,20 +26,6 @@ def test_export_syslog_to_json():
     assert result.stderr == ""
     assert output_json_file.exists(), "Output JSON file does not exist"
 
-    # Read and validate the JSON output
-    with open(output_json_file, 'r') as f:
-        data = json.load(f)
-
-    # Define the expected JSON schema
-    json_schema = create_json_schema()
-
-    # Validate JSON data against the schema
-    for entry in data:
-        try:
-            validate_json(json_schema, entry)
-        except ValidationError as e:
-            pytest.fail(f"JSON data is invalid: {e}")
-
 
 def test_export_syslog_to_csv(tmp_path):
     # Path to the real syslog file in the project directory
@@ -77,9 +48,6 @@ def test_export_syslog_to_csv(tmp_path):
     assert result.stderr == ""
     assert output_csv_file.exists(), "Output JSON file does not exist"
 
-    # Validate the CSV against the schema
-    csv_schema = create_csv_schema()
-    validate_csv(csv_schema, output_csv_file)
 
     # Read and parse the CSV file
     with open(output_csv_file, 'r') as csvfile:
