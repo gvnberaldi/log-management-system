@@ -21,6 +21,7 @@ setup(
         "pytest-mock==3.14.0",
         "referencing==0.35.1",
         "rpds-py==0.20.0",
+        "pycsvschema~=0.0.6"
     ],
     entry_points={
         'console_scripts': [
