@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="syslog_manager",
-    version="1.1.1",
+    version="1.2.0",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -21,6 +21,7 @@ setup(
         "pytest-mock==3.14.0",
         "referencing==0.35.1",
         "rpds-py==0.20.0",
+        "pycsvschema~=0.0.6"
     ],
     entry_points={
         'console_scripts': [

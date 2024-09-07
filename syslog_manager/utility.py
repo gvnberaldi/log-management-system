@@ -62,37 +62,13 @@ def create_csv_schema():
     schema = {
         'fields': [
             {
-                'name': 'timestamp',
-                'type': 'string',
-                "required": True,
+                'name': 'timestamp', 'type': 'string', 'required': True,
                 'pattern': "^(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s+\\d{1,2}\\s+\\d{2}:\\d{2}:\\d{2}$",
-                'description': 'The date and time when the log was created'
             },
-            {
-                'name': 'hostname',
-                'type': 'string',
-                "required": True,
-                'description': 'The name of the machine that generated the log'
-            },
-            {
-                'name': 'process',
-                'type': 'string',
-                "required": True,
-                'description': 'The process that generated the log'
-            },
-            {
-                'name': 'pid',
-                'type': 'number',
-                "required": True,
-                "null_or_empty": True,
-                'description': 'The process ID (optional)'
-            },
-            {
-                'name': 'message',
-                'type': 'string',
-                "required": True,
-                'description': 'The actual log message'
-            }
+            {'name': 'hostname', 'type': 'string', 'required': True},
+            {'name': 'process', 'type': 'string', 'required': True},
+            {'name': 'pid', 'type': 'number', 'required': True, 'nullable': True},
+            {'name': 'message', 'type': 'string', 'required': True}
         ]
     }
     return schema

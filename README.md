@@ -6,7 +6,8 @@ Syslog Manager is a terminal-based tool for manipulating and querying syslog fil
 
 1. **Export Syslog**
    - Export syslog data to a JSON file.
-   - Export syslog data to an SQL database.
+   - Export syslog data to a CSV file.
+   - Export syslog data to a SQL file.
 
 2. **Query Syslog**
    - Retrieve log messages between two timestamps.
@@ -51,8 +52,14 @@ Once installed, the syslog_manager command is available in your terminal. Below 
    ```bash
    syslog_manager export json /path/to/syslog.log /path/to/output.json
    ```
+
+2. **Export to CSV:**
+
+   ```bash
+   syslog_manager export csv /path/to/syslog.log /path/to/output.csv
+   ```
    
-2. **Export to SQL:**
+3. **Export to SQL:**
 
    ```bash
    syslog_manager export sql /path/to/syslog.log /path/to/output.sql
