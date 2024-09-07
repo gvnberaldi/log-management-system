@@ -1,6 +1,6 @@
 import csv
-import pytest
 
+from syslog_manager.export_to_csv import export_syslog_to_csv
 from syslog_manager.utility import create_csv_schema, validate_csv
 
 
@@ -92,7 +92,7 @@ Jun 14 15:16:03 combo kernel: [UFW BLOCK] IN=eth0 OUT= MAC=00:0c:29:68:22:3c:00:
             "timestamp": "Jun 14 15:16:03",
             "hostname": "combo",
             "process": "kernel",
-            "pid": None,
+            "pid": '',
             "message": "[UFW BLOCK] IN=eth0 OUT= MAC=00:0c:29:68:22:3c:00:0c:29:68:22:5c:08:00 SRC=192.168.0.10 DST=192.168.0.1"
         }
     ]
@@ -134,7 +134,7 @@ def test_export_syslog_to_csv_missing_pid(tmp_path):
             "timestamp": "Jun 14 15:16:01",
             "hostname": "combo",
             "process": "sshd(pam_unix)",
-            "pid": None,  # PID is missing, so it should be None
+            "pid": '',
             "message": "authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4"
         }
     ]

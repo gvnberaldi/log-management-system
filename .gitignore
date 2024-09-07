@@ -7,8 +7,7 @@ __pycache__/
 *.so
 
 # Data
-data/syslog_data.json
-data/syslog_data.sql
+data/
 
 
 # Distribution / packaging

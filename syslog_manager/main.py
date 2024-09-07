@@ -18,6 +18,7 @@ from syslog_manager.query_by_process import query_by_process
 from syslog_manager.query_by_words import query_by_words
 from syslog_manager.split_by_day import split_syslog_by_day
 from syslog_manager.count_event_per_process import count_event_per_process
+from syslog_manager.export_to_csv import export_syslog_to_csv
 
 
 def main():
@@ -26,7 +27,7 @@ def main():
 
     # Export command
     export_parser = subparsers.add_parser('export', help='Export syslog data')
-    export_parser.add_argument('format', choices=['json', 'sql'], help='Export format')
+    export_parser.add_argument('format', choices=['json', 'csv', 'sql'], help='Export format')
     export_parser.add_argument('input_file', type=str, help='Path to the syslog file')
     export_parser.add_argument('output_file', type=str, help='Path to the output file')
 
@@ -61,6 +62,8 @@ def main():
     if args.command == 'export':
         if args.format == 'json':
             export_syslog_to_json(args.input_file, args.output_file)
+        elif args.format == 'csv':
+            export_syslog_to_csv(args.input_file, args.output_file)
         elif args.format == 'sql':
             export_syslog_to_sql(args.input_file, args.output_file)
         else:

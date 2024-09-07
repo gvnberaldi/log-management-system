@@ -67,7 +67,7 @@ def create_csv_schema():
             },
             {'name': 'hostname', 'type': 'string', 'required': True},
             {'name': 'process', 'type': 'string', 'required': True},
-            {'name': 'pid', 'type': 'number', 'required': True, 'null_or_empty': True},
+            {'name': 'pid', 'type': 'number', 'required': True, 'nullable': True},
             {'name': 'message', 'type': 'string', 'required': True}
         ]
     }

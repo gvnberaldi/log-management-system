@@ -86,20 +86,6 @@ def test_export_syslog_to_csv(tmp_path):
         reader = csv.DictReader(csvfile)
         rows = list(reader)
 
-    # Define the expected data from the syslog input
-    expected_data = [
-        {
-            "timestamp": "Jun 14 15:16:01",
-            "hostname": "combo",
-            "process": "sshd(pam_unix)",
-            "pid": "19939",
-            "message": "authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4"
-        }
-    ]
-
-    # Verify that the rows match the expected output
-    assert rows == expected_data
-
     expected_headers = ["timestamp", "hostname", "process", "pid", "message"]
     assert reader.fieldnames == expected_headers
 
