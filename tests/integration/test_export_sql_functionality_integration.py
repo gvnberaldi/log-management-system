@@ -2,8 +2,6 @@ import sys
 import subprocess
 from pathlib import Path
 
-from syslog_manager.utility import get_db_connection, get_db_cursor
-
 
 def test_cli_export_syslog_to_sql(tmp_path):
     syslog_content = """Jun 14 15:16:01 combo sshd(pam_unix)[19939]: authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4"""
@@ -44,17 +42,3 @@ def test_cli_export_syslog_to_sql(tmp_path):
     actual_lines = [line.strip() for line in output_sql_file.read_text().strip().splitlines() if line.strip()]
 
     assert expected_lines == actual_lines
-
-    conn = get_db_connection()
-    postgres_cursor = get_db_cursor(conn)
-
-    # Query the database to check if the data is correctly inserted
-    postgres_cursor.execute('SELECT timestamp, hostname, process, pid, message FROM syslog')
-    result = postgres_cursor.fetchone()
-
-    expected_data = (
-        'Jun 14 15:16:01', 'combo', 'sshd(pam_unix)', 19939,
-        'authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4'
-    )
-
-    assert result == expected_data

@@ -1,7 +1,54 @@
+from unittest.mock import mock_open, patch, call
+
 import pytest
 import json
 from syslog_manager.export_to_json import *
 from syslog_manager.utility import create_json_schema, validate_json
+
+
+def test_export_syslog_to_json():
+    # Mock data for the input file
+    mock_lines = [
+        "Sep 1 12:34:56 myhost process[1234]: Test log message 1\n",
+        "Sep 1 12:34:57 myhost process: Test log message 2\n"
+    ]
+
+    # Expected parsed data
+    mock_parsed_lines = [
+        {'timestamp': 'Sep 1 12:34:56', 'hostname': 'myhost', 'process': 'process', 'pid': 1234,
+         'message': 'Test log message 1'},
+        {'timestamp': 'Sep 1 12:34:57', 'hostname': 'myhost', 'process': 'process', 'pid': None,
+         'message': 'Test log message 2'}
+    ]
+
+    # Mocked output file content (JSON format)
+    expected_output = json.dumps(mock_parsed_lines, indent=4)
+
+    # Mock open, readlines, and parse_syslog_line
+    mock_open_func = mock_open(read_data=''.join(mock_lines))
+
+    with patch('builtins.open', mock_open_func), \
+            patch('syslog_manager.export_to_json.parse_syslog_line', side_effect=mock_parsed_lines) as mock_parse:
+        output_file = "mock_output.json"
+
+        # Call the function under test
+        export_syslog_to_json("mock_input.log", output_file)
+
+        # Check that parse_syslog_line was called with the correct input lines
+        expected_calls = [call("Sep 1 12:34:56 myhost process[1234]: Test log message 1\n"),
+                          call("Sep 1 12:34:57 myhost process: Test log message 2\n")]
+        mock_parse.assert_has_calls(expected_calls, any_order=False)
+
+        # Check if open was called with the correct input and output files
+        mock_open_func.assert_called_with(output_file, 'w')
+
+        # Ensure data was written in the expected JSON format
+        # Get all the write calls and collect the written data
+        write_calls = mock_open_func().write.call_args_list
+        written_data = ''.join(call.args[0] for call in write_calls)
+
+        # Assert that the final written data matches the expected JSON
+        assert written_data == expected_output
 
 
 def test_export_syslog_to_json_creates_json_file(tmp_path):

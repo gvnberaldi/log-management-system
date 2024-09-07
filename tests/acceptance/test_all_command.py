@@ -18,6 +18,7 @@ if project_path not in sys.path:
 from syslog_manager.export_to_json import *
 from syslog_manager.utility import create_json_schema, validate_json
 
+
 def test_export_syslog_to_json():
     # Path to the real syslog file in the project directory
     syslog_file = Path(__file__).resolve().parents[2] / "data" / "syslog_data.log"
