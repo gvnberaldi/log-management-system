@@ -1,3 +1,4 @@
+import csv
 import os
 import subprocess
 import sys
@@ -16,7 +17,7 @@ if project_path not in sys.path:
     sys.path.append(project_path)
 
 from syslog_manager.export_to_json import *
-from syslog_manager.utility import create_json_schema, validate_json
+from syslog_manager.utility import create_json_schema, validate_json, create_csv_schema, validate_csv
 
 
 def test_export_syslog_to_json():
@@ -53,6 +54,54 @@ def test_export_syslog_to_json():
             validate_json(json_schema, entry)
         except ValidationError as e:
             pytest.fail(f"JSON data is invalid: {e}")
+
+
+def test_export_syslog_to_csv(tmp_path):
+    # Path to the real syslog file in the project directory
+    syslog_file = Path(__file__).resolve().parents[2] / "data" / "syslog_data.log"
+    output_csv_file = Path(__file__).resolve().parents[2] / "data" / "syslog_data.csv"
+
+    # Construct the path to the main script (syslog_utils.py)
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
+
+    # Execute the CLI command for CSV export
+    result = subprocess.run(
+        [sys.executable, str(script_path), 'export', 'csv', str(syslog_file), str(output_csv_file)],
+        capture_output=True,
+        text=True
+    )
+
+    # Check if command was successful
+    assert result.returncode == 0, f"Command failed with stderr: {result.stderr}"
+    # Check if there was any error
+    assert result.stderr == ""
+    assert output_csv_file.exists(), "Output JSON file does not exist"
+
+    # Validate the CSV against the schema
+    csv_schema = create_csv_schema()
+    validate_csv(csv_schema, output_csv_file)
+
+    # Read and parse the CSV file
+    with open(output_csv_file, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        rows = list(reader)
+
+    # Define the expected data from the syslog input
+    expected_data = [
+        {
+            "timestamp": "Jun 14 15:16:01",
+            "hostname": "combo",
+            "process": "sshd(pam_unix)",
+            "pid": "19939",
+            "message": "authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4"
+        }
+    ]
+
+    # Verify that the rows match the expected output
+    assert rows == expected_data
+
+    expected_headers = ["timestamp", "hostname", "process", "pid", "message"]
+    assert reader.fieldnames == expected_headers
 
 
 def test_export_syslog_to_sql():
