@@ -79,7 +79,7 @@ def test_export_syslog_to_sql():
     assert output_sql_file.exists(), "Output SQL file does not exist"
 
 
-def test_query_by_words_command():
+def test_query_by_words_command_log():
     syslog_file = Path(__file__).resolve().parents[2] / "data" / "syslog_data.log"
 
     # Define the words to search for
@@ -91,7 +91,7 @@ def test_query_by_words_command():
     # Run the command using subprocess
     result = subprocess.run(
         [
-            sys.executable, str(script_path), "query", str(syslog_file), "contains_words", search_words
+            sys.executable, str(script_path), "query", "log", str(syslog_file), "contains_words", search_words
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -104,7 +104,7 @@ def test_query_by_words_command():
     assert result.stderr == ""
 
 
-def test_query_by_process_name_command():
+def test_query_by_process_name_command_log():
     syslog_file = Path(__file__).resolve().parents[2] / "data" / "syslog_data.log"
 
     # Define the process name
@@ -116,7 +116,7 @@ def test_query_by_process_name_command():
     # Run the command using subprocess
     result = subprocess.run(
         [
-            sys.executable, str(script_path), "query", str(syslog_file), "from_process", process_name
+            sys.executable, str(script_path), "query", "log", str(syslog_file), "from_process", process_name
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,

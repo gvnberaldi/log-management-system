@@ -1,10 +1,5 @@
 import subprocess
 import sys
-from pathlib import Path
-
-
-import subprocess
-import sys
 import json
 from pathlib import Path
 
@@ -101,7 +96,7 @@ Jun 15 15:19:04,combo,sshd(pam_unix),19941,"Failed password for user1 from 192.1
 Jun 16 10:00:00,combo,systemd,1,"Started Session 2 of user user2."
 """
 
-    temp_file = tmp_path / "syslog.csv"
+    temp_file = tmp_path / "syslog_data.csv"
     temp_file.write_text(syslog_data, encoding='utf-8', newline='')
 
     expected_output = """\

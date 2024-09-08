@@ -33,7 +33,7 @@ Jun 15 15:19:04 combo sshd(pam_unix)[19941]: Failed password for user1 from 192.
     # Run the command using subprocess
     result = subprocess.run(
         [
-            sys.executable, str(script_path), "query", str(temp_file), "from_process", "sshd"
+            sys.executable, str(script_path), "query", "log", str(temp_file), "from_process", "sshd"
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,

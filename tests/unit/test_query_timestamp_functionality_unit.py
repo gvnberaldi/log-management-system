@@ -11,8 +11,7 @@ project_path = os.path.abspath(os.path.join(script_dir, '..', '..'))
 if project_path not in sys.path:
     sys.path.append(project_path)
 
-from syslog_manager.query_between_timestamps import query_syslog_between_timestamps
-
+from syslog_manager.log_query import create_log_query
 
 def write_syslog_to_temp_file(tmp_path, syslog_data):
     """Helper function to write syslog data to a temporary file."""
@@ -217,7 +216,7 @@ Jun 15 15:19:04,combo,sshd(pam_unix),19941,"Failed password for user1 from 192.1
 Jun 16 10:00:00,combo,systemd,1,"Started Session 2 of user user2."
 """
 
-    temp_file = tmp_path / "syslog.csv"
+    temp_file = tmp_path / "syslog_data.csv"
     temp_file.write_text(syslog_data)
 
     start_date = datetime.strptime("14/06/2024", "%d/%m/%Y")

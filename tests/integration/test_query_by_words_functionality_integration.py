@@ -35,7 +35,7 @@ Jun 15 04:06:20 combo logrotate: ALERT exited abnormally with [1]
     # Run the command using subprocess
     result = subprocess.run(
         [
-            sys.executable, str(script_path), "query", str(temp_file), "contains_words", "failure,Accepted,abnormally"
+            sys.executable, str(script_path), "query", "log", str(temp_file), "contains_words", "failure,Accepted,abnormally"
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
