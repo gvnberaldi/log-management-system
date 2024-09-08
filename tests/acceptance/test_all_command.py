@@ -129,7 +129,7 @@ def test_query_by_process_name_command():
     assert result.stderr == ""
 
 
-def test_query_between_timestamp_command():
+def test_query_between_timestamp_command_log():
     syslog_file = Path(__file__).resolve().parents[2] / "data" / "syslog_data.log"
 
     # Define the timestamps
@@ -142,7 +142,59 @@ def test_query_between_timestamp_command():
     # Run the command using subprocess
     result = subprocess.run(
         [
-            sys.executable, str(script_path), "query", str(syslog_file), "between", start_date, end_date
+            sys.executable, str(script_path), "query", "log", str(syslog_file), "between", start_date, end_date
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+    # Verify the command succeeded
+    assert result.returncode == 0, f"Command failed with stderr: {result.stderr}"
+    # Check if there was any error
+    assert result.stderr == ""
+
+
+def test_query_between_timestamp_command_json():
+    syslog_file = Path(__file__).resolve().parents[2] / "data" / "syslog_data.json"
+
+    # Define the timestamps
+    start_date = "14/06/2024"
+    end_date = "16/06/2025"
+
+    # Construct the path to the main.py file
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
+
+    # Run the command using subprocess
+    result = subprocess.run(
+        [
+            sys.executable, str(script_path), "query", "json", str(syslog_file), "between", start_date, end_date
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+    # Verify the command succeeded
+    assert result.returncode == 0, f"Command failed with stderr: {result.stderr}"
+    # Check if there was any error
+    assert result.stderr == ""
+
+
+def test_query_between_timestamp_command_csv():
+    syslog_file = Path(__file__).resolve().parents[2] / "data" / "syslog_data.csv"
+
+    # Define the timestamps
+    start_date = "14/06/2024"
+    end_date = "16/06/2025"
+
+    # Construct the path to the main.py file
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
+
+    # Run the command using subprocess
+    result = subprocess.run(
+        [
+            sys.executable, str(script_path), "query", "csv", str(syslog_file), "between", start_date, end_date
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
