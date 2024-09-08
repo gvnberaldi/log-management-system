@@ -12,7 +12,6 @@ project_path = os.path.abspath(os.path.join(script_dir, '..'))
 if project_path not in sys.path:
     sys.path.append(project_path)
 
-from syslog_manager.query_by_process import query_by_process
 from syslog_manager.query_by_words import query_by_words
 from syslog_manager.split_by_day import split_syslog_by_day
 from syslog_manager.count_event_per_process import count_event_per_process
@@ -74,19 +73,24 @@ def main():
             parser.print_help()
 
     elif args.command == 'query':
+        file_extension = args.input_file.split('.')[-1]
         if args.query_type == 'between':
             start_date = datetime.strptime(args.start_date, "%d/%m/%Y")
             end_date = datetime.strptime(args.end_date, "%d/%m/%Y")
             # Check if the file extension matches the specified file format
-            file_extension = args.input_file.split('.')[-1]
             if file_extension != args.file_format:
                 raise ValueError(f"File format mismatch: Expected {args.file_format}, got {file_extension}")
             # Call the log query function based on the format
-            log_query = create_log_query(Path(args.input_file), start_date, end_date)
-            result = log_query.query_logs_between_timestamps()
+            log_query = create_log_query(Path(args.input_file))
+            result = log_query.query_logs_between_timestamps(start_date, end_date)
             print(result)
         elif args.query_type == 'from_process':
-            query_by_process(args.input_file, args.process_name)
+            if file_extension != args.file_format:
+                raise ValueError(f"File format mismatch: Expected {args.file_format}, got {file_extension}")
+            # Call the log query function based on the format
+            log_query = create_log_query(Path(args.input_file))
+            result = log_query.query_logs_by_process(args.process_name)
+            print(result)
         elif args.query_type == 'contains_words':
             keywords = args.words.split(',')
             query_by_words(args.input_file, keywords)
