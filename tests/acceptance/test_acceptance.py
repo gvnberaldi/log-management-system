@@ -227,3 +227,21 @@ def test_split_by_day_command():
     assert result.returncode == 0, f"Command failed with stderr: {result.stderr}"
     # Check if there was any error
     assert result.stderr == ""
+
+
+def test_event_frequency_bar_chart(tmp_path):
+    syslog_file = Path(__file__).resolve().parents[2] / "data" / "syslog_data.log"
+
+    # Run the CLI command to generate the bar chart
+    script_path = Path(__file__).resolve().parents[2] / "syslog_manager" / "main.py"
+
+    result = subprocess.run(
+        [sys.executable, str(script_path), 'hourly_report', str(syslog_file)],
+        capture_output=True,
+        text=True
+    )
+
+    # Verify the command succeeded
+    assert result.returncode == 0, f"Command failed with stderr: {result.stderr}"
+    # Check if there was any error
+    assert result.stderr == ""
