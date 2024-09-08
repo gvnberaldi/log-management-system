@@ -13,6 +13,7 @@ Syslog Manager is a terminal-based tool for manipulating and querying syslog fil
    - Retrieve log messages between two timestamps.
    - Retrieve log messages originating from a specific process.
    - Retrieve log messages that contain specific terms.
+   - **New in v2.0.0:** Support for querying data from JSON and CSV files in addition to syslog (.log) files.
 
 3. **Split Syslog**
    - Split a syslog file into multiple files, each storing events for a single day.
@@ -66,23 +67,23 @@ Once installed, the syslog_manager command is available in your terminal. Below 
    ```
    
 ### Query Syslog
-
+In version 2.0.0, the query command now accepts log, JSON, and CSV files as input. The format is specified as part of the command.
 1. **Retrieve Log Messages Between Two Timestamps:**
 
    ```bash
-   syslog_manager query /path/to/syslog.log between 01/01/2024 07/07/2024
+   syslog_manager query [log, json, csv] /path/to/syslog.[log, json, csv] between 01/01/2024 07/07/2024
    ```
    
 2. **Retrieve Log Messages from a Specific Process:**
 
    ```bash
-   syslog_manager query /path/to/syslog.log from_process process_name
+   syslog_manager query [log, json, csv] /path/to/syslog.[log, json, csv] from_process process_name
    ```
    
 3. **Retrieve Log Messages Containing Specific Terms:**
 
    ```bash
-   syslog_manager query /path/to/syslog.log contains_words word1,word2,word3
+   syslog_manager query [log, json, csv] /path/to/syslog.[log, json, csv] contains_words word1,word2,word3
    ```
    
 ### Split Syslog

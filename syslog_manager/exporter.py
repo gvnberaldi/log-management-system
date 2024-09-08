@@ -27,14 +27,6 @@ class SyslogExporter(ABC):
                 self.parsed_data.append(parsed_line)
 
     @abstractmethod
-    def _create_schema(self):
-        pass
-
-    @abstractmethod
-    def _validate_data(self, file=None):
-        pass
-
-    @abstractmethod
     def export(self, output_file):
         pass
 
@@ -126,9 +118,3 @@ class SQLSyslogExporter(SyslogExporter):
                     f"{pid_value}, "
                     f"'{row['message'].replace("'", "''")}');\n"
                 )
-
-    def _create_schema(self):
-        pass
-
-    def _validate_data(self, file=None):
-        pass

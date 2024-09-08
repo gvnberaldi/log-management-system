@@ -59,6 +59,12 @@ def main():
     args = parser.parse_args()
 
     if args.command == 'export':
+        input_file_extension = args.input_file.split('.')[-1]
+        output_file_extension = args.output_file.split('.')[-1]
+        if input_file_extension != 'log':
+            raise ValueError(f"Input file format not supported: Expected .log, got {input_file_extension}")
+        if output_file_extension != args.format:
+            raise ValueError(f"File format mismatch: Expected {args.file_format}, got {output_file_extension}")
         if args.format == 'json':
             json_exporter = JSONSyslogExporter(args.input_file)
             json_exporter.export(args.output_file)
@@ -73,26 +79,21 @@ def main():
 
     elif args.command == 'query':
         file_extension = args.input_file.split('.')[-1]
+        # Check if the file extension matches the specified file format
+        if file_extension != args.file_format:
+            raise ValueError(f"File format mismatch: Expected {args.file_format}, got {file_extension}")
         if args.query_type == 'between':
             start_date = datetime.strptime(args.start_date, "%d/%m/%Y")
             end_date = datetime.strptime(args.end_date, "%d/%m/%Y")
-            # Check if the file extension matches the specified file format
-            if file_extension != args.file_format:
-                raise ValueError(f"File format mismatch: Expected {args.file_format}, got {file_extension}")
             # Call the log query function based on the format
             log_query = create_log_query(Path(args.input_file))
             result = log_query.query_logs_between_timestamps(start_date, end_date)
             print(result)
         elif args.query_type == 'from_process':
-            if file_extension != args.file_format:
-                raise ValueError(f"File format mismatch: Expected {args.file_format}, got {file_extension}")
-            # Call the log query function based on the format
             log_query = create_log_query(Path(args.input_file))
             result = log_query.query_logs_by_process(args.process_name)
             print(result)
         elif args.query_type == 'contains_words':
-            if file_extension != args.file_format:
-                raise ValueError(f"File format mismatch: Expected {args.file_format}, got {file_extension}")
             keywords = args.words.split(',')
             # Call the log query function based on the format
             log_query = create_log_query(Path(args.input_file))
@@ -102,12 +103,18 @@ def main():
             parser.print_help()
 
     elif args.command == 'split':
+        input_file_extension = args.input_file.split('.')[-1]
+        if input_file_extension != 'log':
+            raise ValueError(f"Input file format not supported: Expected .log, got {input_file_extension}")
         split_syslog_by_day(args.input_file)
 
     elif args.command == 'count_event_per_process':
+        input_file_extension = args.input_file.split('.')[-1]
+        if input_file_extension != 'log':
+            raise ValueError(f"Input file format not supported: Expected .log, got {input_file_extension}")
         num_event = count_event_per_process(args.input_file)
-        for process, events_num in num_event.items():
-            print(f'Events for process {process}: {events_num}')
+        for process, num_events in num_event.items():
+            print(f'Events for process {process}: {num_events}')
 
     else:
         parser.print_help()

@@ -138,13 +138,19 @@ class JSONFileQuery(LogQuery):
 
 class CSVFileQuery(LogQuery):
     def query_logs_between_timestamps(self, start_timestamp, end_timestamp):
-        with open(self.input_file, 'r') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                timestamp = row.get('timestamp')
-                if timestamp and self._filter_by_timestamp(f"{timestamp} {datetime.now().year}",
-                                                          start_timestamp.date(), end_timestamp.date()):
-                    self.filtered_logs.append(str(row))
+        try:
+            with open(self.input_file, 'r') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    timestamp = row.get('timestamp')
+                    if timestamp and self._filter_by_timestamp(f"{timestamp} {datetime.now().year}",
+                                                              start_timestamp.date(), end_timestamp.date()):
+                        self.filtered_logs.append(str(row))
+        except FileNotFoundError:
+            raise FileNotFoundError(f"The file {self.input_file} does not exist.")
+        except IOError as e:
+            raise IOError(f"Error reading the file {self.input_file}: {e}")
+
         return "\n".join(self.filtered_logs)
 
     def query_logs_by_process(self, process):

@@ -17,11 +17,12 @@ setup(
         "pluggy==1.5.0",
         "port-for==0.7.2",
         "psutil==6.0.0",
+        "pycsvschema==0.0.6",
         "pytest==8.3.2",
         "pytest-mock==3.14.0",
         "referencing==0.35.1",
+        "rfc3986==2.0.0",
         "rpds-py==0.20.0",
-        "pycsvschema~=0.0.6"
     ],
     entry_points={
         'console_scripts': [
