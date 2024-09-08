@@ -1,5 +1,7 @@
 import pytest
 
+from syslog_manager.hourly_report import count_events_per_hour
+
 
 def test_count_events_per_hour_with_sample_data(tmp_path):
     # Sample log lines with different hours
@@ -47,16 +49,16 @@ def test_count_events_per_hour_with_empty_data(tmp_path):
 
 def test_count_events_per_hour_with_no_hourly_data(tmp_path):
     # Log entries with no valid hour data (e.g., invalid timestamps)
-    syslog_content = """Jun 25 00:01:00 combo sshd(pam_unix)[10001]: some message
-Jun 26 01:15:30 combo sshd(pam_unix)[10002]: another message
-Jun -01 01:15:30 combo sshd(pam_unix)[10002]: another message
+    syslog_content = """Jun 14 25:01:00 combo sshd(pam_unix)[10001]: some message
+Jun 15 26:15:30 combo sshd(pam_unix)[10002]: another message
+Jun 16 -01:15:30 combo sshd(pam_unix)[10002]: another message
 """
 
     syslog_file = tmp_path / "syslog.log"
     syslog_file.write_text(syslog_content)
     expected_counts = {}
 
-    hourly_counts = count_events_per_hour(syslog_content)
+    hourly_counts = count_events_per_hour(syslog_file)
 
     # Assert that no events are counted as the timestamps are invalid
     assert hourly_counts == expected_counts

@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="syslog_manager",
-    version="2.0.0",
+    version="2.1.0",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -14,6 +14,7 @@ setup(
         "jsonschema-specifications==2023.12.1",
         "mirakuru==2.5.2",
         "packaging==24.1",
+        "plotext==5.2.8",
         "pluggy==1.5.0",
         "port-for==0.7.2",
         "psutil==6.0.0",

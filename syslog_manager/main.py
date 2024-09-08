@@ -16,6 +16,7 @@ from syslog_manager.split_by_day import split_syslog_by_day
 from syslog_manager.count_event_per_process import count_event_per_process
 from syslog_manager.exporter import JSONSyslogExporter, CSVSyslogExporter, SQLSyslogExporter
 from syslog_manager.log_query import create_log_query
+from syslog_manager.hourly_report import *
 
 
 def main():
@@ -55,6 +56,10 @@ def main():
     # Print number of event for each process
     events_counter = subparsers.add_parser('count_event_per_process', help='Export syslog data')
     events_counter.add_argument('input_file', type=str, help='Path to the syslog file')
+
+    # Hourly report command
+    hourly_report_parser = subparsers.add_parser('hourly_report', help='Generate hourly event frequency report')
+    hourly_report_parser.add_argument('input_file', type=str, help='Path to the syslog file')
 
     args = parser.parse_args()
 
@@ -115,6 +120,13 @@ def main():
         num_event = count_event_per_process(args.input_file)
         for process, num_events in num_event.items():
             print(f'Events for process {process}: {num_events}')
+
+    elif args.command == 'hourly_report':
+        input_file_extension = args.input_file.split('.')[-1]
+        if input_file_extension != 'log':
+            raise ValueError(f"Input file format not supported: Expected .log, got {input_file_extension}")
+        hourly_counts = count_events_per_hour(args.input_file)
+        generate_bar_chart(hourly_counts)
 
     else:
         parser.print_help()
