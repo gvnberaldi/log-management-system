@@ -30,6 +30,10 @@ class LogQuery(ABC):
     def query_logs_by_process(self, process):
         pass
 
+    @abstractmethod
+    def query_logs_by_words(self, keywords):
+        pass
+
 
 class LogFileQuery(LogQuery):
     def __init__(self, input_file):
@@ -58,9 +62,25 @@ class LogFileQuery(LogQuery):
             with open(self.input_file, 'r') as file:
                 lines = file.readlines()
                 for line in lines:
-                    parsed_line = parse_syslog_line(line)
+                    parsed_line = self._parse_syslog_line(line)
                     if parsed_line and pattern.match(parsed_line['process']):
                         self.filtered_logs.append(line.strip())
+        except FileNotFoundError:
+            raise FileNotFoundError(f"The file {self.input_file} does not exist.")
+        except IOError as e:
+            raise IOError(f"Error reading the file {self.input_file}: {e}")
+
+        return "\n".join(self.filtered_logs)
+
+    def query_logs_by_words(self, keywords):
+        try:
+            with open(self.input_file, 'r') as syslog_file:
+                for line in syslog_file:
+                    parsed_line = self._parse_syslog_line(line)
+                    if parsed_line:
+                        message = parsed_line['message']
+                        if any(keyword in message for keyword in keywords):
+                            self.filtered_logs.append(line.strip())
         except FileNotFoundError:
             raise FileNotFoundError(f"The file {self.input_file} does not exist.")
         except IOError as e:
@@ -101,6 +121,20 @@ class JSONFileQuery(LogQuery):
 
         return "\n".join(self.filtered_logs)
 
+    def query_logs_by_words(self, keywords):
+        try:
+            with open(self.input_file, 'r') as f:
+                data = json.load(f)
+                for entry in data:
+                    if 'message' in entry and any(keyword in entry['message'] for keyword in keywords):
+                        self.filtered_logs.append(json.dumps(entry))
+        except FileNotFoundError:
+            raise FileNotFoundError(f"The file {self.input_file} does not exist.")
+        except IOError as e:
+            raise IOError(f"Error reading the file {self.input_file}: {e}")
+
+        return "\n".join(self.filtered_logs)
+
 
 class CSVFileQuery(LogQuery):
     def query_logs_between_timestamps(self, start_timestamp, end_timestamp):
@@ -120,6 +154,20 @@ class CSVFileQuery(LogQuery):
                 reader = csv.DictReader(f)
                 for row in reader:
                     if 'process' in row and pattern.match(row['process']):
+                        self.filtered_logs.append(str(row))
+        except FileNotFoundError:
+            raise FileNotFoundError(f"The file {self.input_file} does not exist.")
+        except IOError as e:
+            raise IOError(f"Error reading the file {self.input_file}: {e}")
+
+        return "\n".join(self.filtered_logs)
+
+    def query_logs_by_words(self, keywords):
+        try:
+            with open(self.input_file, 'r') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    if 'message' in row and any(keyword in row['message'] for keyword in keywords):
                         self.filtered_logs.append(str(row))
         except FileNotFoundError:
             raise FileNotFoundError(f"The file {self.input_file} does not exist.")

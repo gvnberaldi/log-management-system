@@ -12,7 +12,6 @@ project_path = os.path.abspath(os.path.join(script_dir, '..'))
 if project_path not in sys.path:
     sys.path.append(project_path)
 
-from syslog_manager.query_by_words import query_by_words
 from syslog_manager.split_by_day import split_syslog_by_day
 from syslog_manager.count_event_per_process import count_event_per_process
 from syslog_manager.exporter import JSONSyslogExporter, CSVSyslogExporter, SQLSyslogExporter
@@ -92,8 +91,13 @@ def main():
             result = log_query.query_logs_by_process(args.process_name)
             print(result)
         elif args.query_type == 'contains_words':
+            if file_extension != args.file_format:
+                raise ValueError(f"File format mismatch: Expected {args.file_format}, got {file_extension}")
             keywords = args.words.split(',')
-            query_by_words(args.input_file, keywords)
+            # Call the log query function based on the format
+            log_query = create_log_query(Path(args.input_file))
+            result = log_query.query_logs_by_words(keywords)
+            print(result)
         else:
             parser.print_help()
 

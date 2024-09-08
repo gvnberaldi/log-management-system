@@ -13,13 +13,6 @@ if project_path not in sys.path:
     sys.path.append(project_path)
 
 
-def write_syslog_to_temp_file(tmp_path, syslog_data):
-    """Helper function to write syslog data to a temporary file."""
-    temp_file = tmp_path / "syslog.log"
-    temp_file.write_text(syslog_data, encoding='utf-8', newline='')
-    return temp_file
-
-
 def test_query_basic_log(tmp_path):
     syslog_data = """\
 Jun 13 15:16:01 combo sshd(pam_unix)[19939]: authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4
