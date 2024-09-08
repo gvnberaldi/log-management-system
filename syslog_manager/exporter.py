@@ -1,17 +1,19 @@
 import csv
 import json
 from abc import ABC, abstractmethod
-import re
 
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from pycsvschema.checker import Validator
+
+from syslog_manager.utility import parse_syslog_line
 
 
 class SyslogExporter(ABC):
     def __init__(self, input_file):
         self.input_file = input_file
         self.parsed_data = []
+        self._parse_syslog_line = parse_syslog_line
         self._read_and_parse_syslog()
 
     def _read_and_parse_syslog(self):
@@ -23,27 +25,6 @@ class SyslogExporter(ABC):
             if parsed_line:
                 parsed_line['pid'] = int(parsed_line['pid']) if parsed_line['pid'] else None
                 self.parsed_data.append(parsed_line)
-
-    def _parse_syslog_line(self, line):
-        syslog_pattern = re.compile(
-            r'^(?P<timestamp>[A-Za-z]{3}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}) '
-            r'(?P<hostname>\S+) '
-            r'(?P<process>\S+?)'
-            r'(?:\[(?P<pid>\d+)\])?: '
-            r'(?P<message>.*)$'
-        )
-        match = syslog_pattern.match(line)
-        if match:
-            return match.groupdict()
-        return None
-
-    @abstractmethod
-    def _create_schema(self):
-        pass
-
-    @abstractmethod
-    def _validate_data(self, file=None):
-        pass
 
     @abstractmethod
     def export(self, output_file):
@@ -137,9 +118,3 @@ class SQLSyslogExporter(SyslogExporter):
                     f"{pid_value}, "
                     f"'{row['message'].replace("'", "''")}');\n"
                 )
-
-    def _create_schema(self):
-        pass
-
-    def _validate_data(self, file=None):
-        pass

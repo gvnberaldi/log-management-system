@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
 
 # Get the directory containing the current script
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -11,12 +12,10 @@ project_path = os.path.abspath(os.path.join(script_dir, '..'))
 if project_path not in sys.path:
     sys.path.append(project_path)
 
-from syslog_manager.query_between_timestamps import query_syslog_between_timestamps
-from syslog_manager.query_by_process import query_by_process
-from syslog_manager.query_by_words import query_by_words
 from syslog_manager.split_by_day import split_syslog_by_day
 from syslog_manager.count_event_per_process import count_event_per_process
 from syslog_manager.exporter import JSONSyslogExporter, CSVSyslogExporter, SQLSyslogExporter
+from syslog_manager.log_query import create_log_query
 
 
 def main():
@@ -31,6 +30,8 @@ def main():
 
     # Query command
     query_parser = subparsers.add_parser('query', help='Query syslog data')
+    query_parser.add_argument('file_format', type=str, choices=['log', 'json', 'csv'],
+                              help='Input file format (log, json, csv)')
     query_parser.add_argument('input_file', type=str, help='Path to the syslog file')
     query_subparsers = query_parser.add_subparsers(dest='query_type')
 
@@ -58,6 +59,12 @@ def main():
     args = parser.parse_args()
 
     if args.command == 'export':
+        input_file_extension = args.input_file.split('.')[-1]
+        output_file_extension = args.output_file.split('.')[-1]
+        if input_file_extension != 'log':
+            raise ValueError(f"Input file format not supported: Expected .log, got {input_file_extension}")
+        if output_file_extension != args.format:
+            raise ValueError(f"File format mismatch: Expected {args.file_format}, got {output_file_extension}")
         if args.format == 'json':
             json_exporter = JSONSyslogExporter(args.input_file)
             json_exporter.export(args.output_file)
@@ -71,25 +78,43 @@ def main():
             parser.print_help()
 
     elif args.command == 'query':
+        file_extension = args.input_file.split('.')[-1]
+        # Check if the file extension matches the specified file format
+        if file_extension != args.file_format:
+            raise ValueError(f"File format mismatch: Expected {args.file_format}, got {file_extension}")
         if args.query_type == 'between':
             start_date = datetime.strptime(args.start_date, "%d/%m/%Y")
             end_date = datetime.strptime(args.end_date, "%d/%m/%Y")
-            query_syslog_between_timestamps(args.input_file, start_date, end_date)
+            # Call the log query function based on the format
+            log_query = create_log_query(Path(args.input_file))
+            result = log_query.query_logs_between_timestamps(start_date, end_date)
+            print(result)
         elif args.query_type == 'from_process':
-            query_by_process(args.input_file, args.process_name)
+            log_query = create_log_query(Path(args.input_file))
+            result = log_query.query_logs_by_process(args.process_name)
+            print(result)
         elif args.query_type == 'contains_words':
             keywords = args.words.split(',')
-            query_by_words(args.input_file, keywords)
+            # Call the log query function based on the format
+            log_query = create_log_query(Path(args.input_file))
+            result = log_query.query_logs_by_words(keywords)
+            print(result)
         else:
             parser.print_help()
 
     elif args.command == 'split':
+        input_file_extension = args.input_file.split('.')[-1]
+        if input_file_extension != 'log':
+            raise ValueError(f"Input file format not supported: Expected .log, got {input_file_extension}")
         split_syslog_by_day(args.input_file)
 
     elif args.command == 'count_event_per_process':
+        input_file_extension = args.input_file.split('.')[-1]
+        if input_file_extension != 'log':
+            raise ValueError(f"Input file format not supported: Expected .log, got {input_file_extension}")
         num_event = count_event_per_process(args.input_file)
-        for process, events_num in num_event.items():
-            print(f'Events for process {process}: {events_num}')
+        for process, num_events in num_event.items():
+            print(f'Events for process {process}: {num_events}')
 
     else:
         parser.print_help()
