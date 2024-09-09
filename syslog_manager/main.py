@@ -54,7 +54,7 @@ def main():
     split_parser.add_argument('input_file', type=str, help='Path to the syslog file')
 
     # Print number of event for each process
-    events_counter = subparsers.add_parser('count_event_per_process', help='Export syslog data')
+    events_counter = subparsers.add_parser('count_event_per_process', help='Count the number of events per process')
     events_counter.add_argument('input_file', type=str, help='Path to the syslog file')
 
     # Hourly report command
