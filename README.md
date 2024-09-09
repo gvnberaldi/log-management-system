@@ -1,6 +1,6 @@
 # Syslog Manager
 
-Syslog Manager is a terminal-based tool for manipulating and querying syslog files. It allows you to export syslog data to JSON or SQL formats, perform simple and complex queries, and split syslog files by day.
+Syslog Manager is a terminal-based tool for manipulating and querying syslog files. It allows you to export syslog data to different formats, perform simple and complex queries, split syslog files by day and more.
 
 ## Features
 
